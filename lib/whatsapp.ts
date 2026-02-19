@@ -134,8 +134,9 @@ Balas *"YA"* dalam 10 menit untuk konfirmasi.`;
 
 /**
  * Validate Indonesian phone number format
+ * Returns the formatted number if valid, false otherwise
  */
-export function isValidWhatsAppNumber(phone: string): boolean {
+export function isValidWhatsAppNumber(phone: string): string | false {
   // Remove spaces, dashes, and other non-digit characters
   const cleaned = phone.replace(/\D/g, '');
 

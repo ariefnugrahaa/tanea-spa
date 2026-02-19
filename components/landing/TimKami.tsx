@@ -4,8 +4,55 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 
+interface Therapist {
+  name: string;
+  photo: string;
+  specialization: string;
+  years: string;
+}
+
+function TherapistCard({ therapist }: { therapist: Therapist }) {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow duration-300">
+      {/* Photo */}
+      <div className="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 rounded-full overflow-hidden bg-gradient-to-br from-terracotta to-terracotta-dark">
+        {imageError ? (
+          // Fallback initial if image fails to load
+          <span className="absolute inset-0 flex items-center justify-center text-cream text-2xl sm:text-3xl font-display font-bold">
+            {therapist.name.charAt(0)}
+          </span>
+        ) : (
+          <Image
+            src={therapist.photo}
+            alt={therapist.name}
+            fill
+            className="object-cover"
+            sizes="80px"
+            onError={() => setImageError(true)}
+          />
+        )}
+      </div>
+
+      {/* Name */}
+      <h3 className="font-display text-lg sm:text-xl font-bold text-deep-brown mb-1 sm:mb-2">
+        {therapist.name}
+      </h3>
+
+      {/* Specialization */}
+      <p className="text-terracotta font-medium text-xs sm:text-sm mb-1">
+        {therapist.specialization}
+      </p>
+
+      {/* Experience */}
+      <p className="text-charcoal/60 text-xs sm:text-sm">{therapist.years} Tahun Pengalaman</p>
+    </Card>
+  );
+}
+
 export function TimKami() {
-  const therapists = [
+  const therapists: Therapist[] = [
     {
       name: 'Dewi',
       photo: '/images/terapis/dewi.jpg',
@@ -67,45 +114,5 @@ export function TimKami() {
         </div>
       </div>
     </section>
-  );
-}
-
-function TherapistCard({ therapist }: { therapist: typeof therapists[number] }) {
-  const [imageError, setImageError] = useState(false);
-
-  return (
-    <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow duration-300">
-      {/* Photo */}
-      <div className="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 rounded-full overflow-hidden bg-gradient-to-br from-terracotta to-terracotta-dark">
-        {imageError ? (
-          // Fallback initial if image fails to load
-          <span className="absolute inset-0 flex items-center justify-center text-cream text-2xl sm:text-3xl font-display font-bold">
-            {therapist.name.charAt(0)}
-          </span>
-        ) : (
-          <Image
-            src={therapist.photo}
-            alt={therapist.name}
-            fill
-            className="object-cover"
-            sizes="80px"
-            onError={() => setImageError(true)}
-          />
-        )}
-      </div>
-
-      {/* Name */}
-      <h3 className="font-display text-lg sm:text-xl font-bold text-deep-brown mb-1 sm:mb-2">
-        {therapist.name}
-      </h3>
-
-      {/* Specialization */}
-      <p className="text-terracotta font-medium text-xs sm:text-sm mb-1">
-        {therapist.specialization}
-      </p>
-
-      {/* Experience */}
-      <p className="text-charcoal/60 text-xs sm:text-sm">{therapist.years} Tahun Pengalaman</p>
-    </Card>
   );
 }

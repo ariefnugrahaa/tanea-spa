@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
       // Get therapist's schedule for the day of week
       const dayNames = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
       const dayName = dayNames[date.getDay()];
-      const schedule = k.jadwalKerja?.[dayName] as { mulai: string; selesai: string } | undefined;
+      const schedule = (k.jadwalKerja as Record<string, { mulai: string; selesai: string }> | undefined)?.[dayName];
 
       if (!schedule) {
         return {

@@ -30,8 +30,12 @@ export default function BookingPage() {
 
   const currentService = services[selectedCategory].find((s) => s.id === selectedService);
 
-  const handleServiceSelect = (serviceId: string) => {
+  const handleServiceSelect = (serviceId: string | null) => {
     setSelectedService(serviceId);
+    if (!serviceId) {
+      setSelectedDuration(null);
+      return;
+    }
     const service = services[selectedCategory].find((s) => s.id === serviceId);
     if (service && service.durations.length === 1) {
       setSelectedDuration(service.durations[0]);
@@ -241,17 +245,11 @@ export default function BookingPage() {
                 disabled={
                   (step === 'service' && (!selectedService || !selectedDuration)) ||
                   (step === 'schedule' && (!selectedDate || !selectedTime)) ||
-                  (step === 'details' && (!formData.nama || !formData.whatsapp)) ||
-                  step === 'submitting'
+                  (step === 'details' && (!formData.nama || !formData.whatsapp))
                 }
                 className="w-full sm:w-auto"
               >
-                {step === 'submitting' ? (
-                  <>
-                    <Loader2 size={18} className="mr-2 animate-spin" />
-                    Memproses...
-                  </>
-                ) : step === 'summary' ? 'Konfirmasi Booking' : 'Lanjut'}
+                {step === 'summary' ? 'Konfirmasi Booking' : 'Lanjut'}
                 <ArrowRight size={18} className="ml-2" />
               </Button>
             </div>
@@ -309,7 +307,7 @@ function StepService({
   selectedCategory: ServiceCategory;
   setSelectedCategory: (cat: ServiceCategory) => void;
   selectedService: string | null;
-  setSelectedService: (id: string) => void;
+  setSelectedService: (id: string | null) => void;
   selectedDuration: number | null;
   setSelectedDuration: (dur: number | null) => void;
 }) {
@@ -338,8 +336,9 @@ function StepService({
                 <div className="flex flex-col items-center justify-center gap-0.5">
                   <span className="text-xs font-bold leading-tight">
                     {category === 'MASSAGE' && 'Pijat'}
-                    {category === 'REFLEKSI' && 'Refleksi'}
-                    {category === 'SPA_RITUALS' && 'Paket'}
+                    {category === 'REFLEXOLOGY' && 'Refleksi'}
+                    {category === 'SPA_PACKAGES' && 'Paket'}
+                    {category === 'SPA_RITUALS' && 'Ritual'}
                   </span>
                   <span className="text-[10px] font-medium leading-tight opacity-80">
                     {count} pilihan

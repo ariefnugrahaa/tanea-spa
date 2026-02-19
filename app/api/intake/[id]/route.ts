@@ -7,9 +7,10 @@ import { prisma } from '@/lib/prisma';
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { catatanTerapis, status } = body;
 
@@ -19,7 +20,7 @@ export async function PATCH(
     // if (status) updateData.status = status;
 
     const intake = await prisma.intake.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
       include: {
         booking: {

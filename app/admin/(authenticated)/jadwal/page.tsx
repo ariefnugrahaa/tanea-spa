@@ -18,6 +18,7 @@ interface Booking {
   jamMulai: string;
   jamSelesai: string;
   status: string;
+  karyawanId?: string;
   layanan: { nama: string; durasi: number };
   klien: { nama: string; whatsapp?: string };
 }

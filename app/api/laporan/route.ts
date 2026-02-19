@@ -61,9 +61,6 @@ export async function GET() {
         status: { notIn: ['PENDING_INTAKE', 'DIBATALKAN'] },
       },
       _count: true,
-      _sum: {
-        id: true,
-      },
     });
 
     const serviceIds = serviceStats.map((s) => s.layananId);

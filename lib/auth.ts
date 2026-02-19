@@ -1,6 +1,28 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
+declare module 'next-auth' {
+  interface User {
+    role: string;
+  }
+
+  interface Session {
+    user: {
+      id: string;
+      username?: string;
+      role: string;
+    } & {
+      [key: string]: any;
+    };
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    role: string;
+  }
+}
+
 // DEMO MODE: Simple in-memory auth for testing without PostgreSQL
 // For production with PostgreSQL, use PrismaAdapter and database
 const demoUsers = [
