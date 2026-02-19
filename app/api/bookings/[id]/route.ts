@@ -7,11 +7,12 @@ import { prisma } from '@/lib/prisma';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         layanan: true,
         klien: true,
@@ -43,9 +44,10 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { status, karyawanId, catatanTerapis } = body;
 
@@ -64,7 +66,7 @@ export async function PATCH(
 
     // Update booking
     const booking = await prisma.booking.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
       include: {
         layanan: true,
@@ -98,11 +100,12 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const booking = await prisma.booking.update({
-      where: { id: params.id },
+      where: { id },
       data: { status: 'DIBATALKAN' },
       include: {
         layanan: true,
