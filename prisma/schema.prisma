@@ -1,0 +1,150 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String    @id @default(cuid())
+  username  String    @unique
+  password  String
+  role      Role      @default(TERAPIS)
+  karyawan  Karyawan?
+  createdAt DateTime  @default(now())
+}
+
+enum Role {
+  SUPER_ADMIN
+  TERAPIS
+}
+
+model Karyawan {
+  id           String    @id @default(cuid())
+  nama         String    @unique
+  gender       Gender
+  seksi        Seksi
+  spesialisasi String    // SQLite doesn't support array, using JSON instead
+  foto         String?
+  aktif        Boolean   @default(true)
+  userId       String?   @unique
+  user         User?     @relation(fields: [userId], references: [id])
+  jadwalKerja  Json      // { senin: { mulai: "09:00", selesai: "21:00" }, ... }
+  bookings     Booking[]
+  createdAt    DateTime  @default(now())
+}
+
+model Layanan {
+  id          String    @id @default(cuid())
+  nama        String
+  kategori    Kategori
+  deskripsi   String?
+  komposisi   String?   // "Sundara Massage + Body Scrub + ..."
+  durasi      Int       // menit
+  harga       Int       // rupiah
+  aktif       Boolean   @default(true)
+  badge       String?   // "Most Popular", "Khusus Wanita", etc.
+  bookings    Booking[]
+}
+
+enum Kategori {
+  MASSAGE
+  REFLEXOLOGY
+  SPA_PACKAGES
+  SPA_RITUALS
+}
+
+model Klien {
+  id           String    @id @default(cuid())
+  nama         String
+  whatsapp     String?
+  gender       Gender?
+  lahir        DateTime?
+  catatanAdmin String?
+  bookings     Booking[]
+  createdAt    DateTime  @default(now())
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  klienId    String
+  klien      Klien         @relation(fields: [klienId], references: [id])
+  layananId  String
+  layanan    Layanan       @relation(fields: [layananId], references: [id])
+  karyawanId String?
+  karyawan   Karyawan?     @relation(fields: [karyawanId], references: [id])
+  tanggal    DateTime
+  jamMulai   DateTime
+  jamSelesai DateTime
+  tipe       TipeBooking   @default(ONLINE)
+  status     StatusBooking @default(PENDING_INTAKE)
+  catatan    String?
+  qrToken    String?       @unique
+  intake     Intake?
+  createdAt  DateTime      @default(now())
+}
+
+enum TipeBooking {
+  ONLINE
+  WALK_IN
+}
+
+enum StatusBooking {
+  PENDING_INTAKE
+  CONFIRMED
+  IN_PROGRESS
+  SELESAI
+  DIBATALKAN
+}
+
+model Intake {
+  id               String   @id @default(cuid())
+  bookingId        String   @unique
+  booking          Booking  @relation(fields: [bookingId], references: [id])
+  usia             Int
+  gender           Gender
+  kondisiKesehatan Json     // array string kondisi yang dicentang
+  petaTubuh        Json     // { front: { zona: state }, back: { zona: state } }
+  tekananPijatan   String
+  prefTerapis      String
+  aromaTerapi      String
+  suhuRuangan      String
+  musik            String
+  catatanKlien     String?
+  catatanTerapis   String?
+  flagMedis        Boolean  @default(false)
+  submittedAt      DateTime @default(now())
+}
+
+// Model for storing health conditions as separate table
+model KondisiKesehatan {
+  id          String   @id @default(cuid())
+  nama        String   @unique
+  kategori    String   // "Kondisi Tubuh", "Kondisi Kulit", "Kehamilan", etc.
+}
+
+model Waitlist {
+  id        String   @id @default(cuid())
+  nama      String
+  whatsapp  String
+  layananId String
+  tanggal   DateTime
+  status    String   @default("MENUNGGU") // MENUNGGU | NOTIFIED | CONFIRMED | EXPIRED
+  createdAt DateTime @default(now())
+}
+
+enum Gender {
+  WANITA
+  PRIA
+}
+
+enum Seksi {
+  WANITA
+  PRIA
+  KEDUANYA
+}
